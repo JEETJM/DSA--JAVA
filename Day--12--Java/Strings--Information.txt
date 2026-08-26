@@ -1,0 +1,1717 @@
+| Function             | Use                                   |
+| -------------------- | ------------------------------------- |
+| `length()`           | Finds string length                   |
+| `charAt(index)`      | Gets character at index               |
+| `toUpperCase()`      | Converts to uppercase                 |
+| `toLowerCase()`      | Converts to lowercase                 |
+| `trim()`             | Removes starting and ending spaces    |
+| `equals()`           | Compares exact strings                |
+| `equalsIgnoreCase()` | Compares ignoring uppercase/lowercase |
+| `compareTo()`        | Lexicographic comparison              |
+| `contains()`         | Checks if text exists                 |
+| `startsWith()`       | Checks starting text                  |
+| `endsWith()`         | Checks ending text                    |
+| `indexOf()`          | Finds first position                  |
+| `lastIndexOf()`      | Finds last position                   |
+| `substring()`        | Extracts part of string               |
+| `replace()`          | Replaces text                         |
+| `split()`            | Breaks string into array              |
+| `concat()`           | Joins strings                         |
+| `isEmpty()`          | Checks length is 0                    |
+| `isBlank()`          | Checks empty or only spaces           |
+| `toCharArray()`      | Converts string to char array         |
+| `matches()`          | Checks regex pattern                  |
+| `repeat()`           | Repeats string                        |
+| `String.valueOf()`   | Converts value to string              |
+
+
+
+
+
+
+
+
+
+
+
+interning ,  why strings are immutable , heap ,  stack memory all concepts send me expalin in details 
+
+1. First understand Java memory: Stack vs Heap
+
+Java program memory mainly uses:
+
+Stack Memory
+Heap Memory
+String Pool
+
+Actually, String Pool is inside Heap memory.
+
+2. Stack Memory in Java
+
+Stack memory is used for:
+
+local variables
+method calls
+references
+temporary data
+
+Example:
+
+public class Main {
+    public static void main(String[] args) {
+        int a = 10;
+        String name = "Jeet";
+    }
+}
+
+Memory idea:
+
+Stack
+--------------------------------
+main() method frame
+--------------------------------
+a = 10
+
+name = reference/address
+--------------------------------
+
+Here:
+
+int a = 10;
+
+a is a primitive variable, so value 10 is directly stored in stack.
+
+But:
+
+String name = "Jeet";
+
+name is not storing full "Jeet" inside stack.
+It stores a reference/address of the actual String object.
+
+3. Heap Memory in Java
+
+Heap memory is used for:
+
+objects
+arrays
+instance variables
+String objects
+
+Example:
+
+String name = new String("Jeet");
+
+Memory idea:
+
+Stack
+-------------------------
+name = address 101
+-------------------------
+
+
+Heap
+-------------------------
+101 -> String object "Jeet"
+-------------------------
+
+So, object data is stored in heap, and stack keeps only the reference.
+
+4. String Pool
+
+String Pool is a special memory area inside heap.
+
+It stores string literals to save memory.
+
+Example:
+
+String s1 = "Apple";
+String s2 = "Apple";
+
+Java does not create two separate "Apple" objects.
+
+Memory:
+
+Stack
+-------------------------
+s1 -> address 500
+s2 -> address 500
+-------------------------
+
+
+Heap / String Pool
+-------------------------
+500 -> "Apple"
+-------------------------
+
+Both s1 and s2 point to the same "Apple" object.
+
+That is why:
+
+System.out.println(s1 == s2);
+
+Output:
+
+true
+
+Because both references point to the same object.
+
+5. What is String Interning?
+
+String interning means storing only one copy of each unique string literal in the String Pool.
+
+Example:
+
+String a = "Mango";
+String b = "Mango";
+String c = "Mango";
+
+Java creates only one "Mango" in String Pool.
+
+String Pool
+-------------------------
+"Mango"
+-------------------------
+
+a, b, c all point to same Mango
+
+This saves memory.
+
+6. new String() vs String Literal
+
+Very important concept.
+
+Example 1: String literal
+String s1 = "Apple";
+String s2 = "Apple";
+
+System.out.println(s1 == s2);
+
+Output:
+
+true
+
+Because both use String Pool.
+
+Example 2: Using new String()
+String s1 = "Apple";
+String s2 = new String("Apple");
+
+System.out.println(s1 == s2);
+
+Output:
+
+false
+
+Why?
+
+Because:
+
+String s1 = "Apple";
+
+creates/uses object from String Pool.
+
+String s2 = new String("Apple");
+
+creates a new object in normal heap memory.
+
+Memory:
+
+Stack
+-------------------------
+s1 -> address 500
+s2 -> address 900
+-------------------------
+
+
+Heap / String Pool
+-------------------------
+500 -> "Apple"
+-------------------------
+
+
+Normal Heap
+-------------------------
+900 -> "Apple"
+-------------------------
+
+Both values are same, but memory addresses are different.
+
+So:
+
+s1 == s2
+
+checks address, output is false.
+
+But:
+
+s1.equals(s2)
+
+checks actual content, output is true.
+
+7. Difference between == and .equals()
+==
+
+Checks memory address/reference.
+
+String a = "Apple";
+String b = "Apple";
+
+System.out.println(a == b);
+
+Output:
+
+true
+.equals()
+
+Checks actual value/content.
+
+String a = "Apple";
+String b = new String("Apple");
+
+System.out.println(a.equals(b));
+
+Output:
+
+true
+
+So for strings, mostly use:
+
+.equals()
+
+not:
+
+==
+8. What is intern() method?
+
+intern() manually puts string into String Pool or returns the pooled reference.
+
+Example:
+
+String s1 = "Apple";
+String s2 = new String("Apple");
+
+String s3 = s2.intern();
+
+System.out.println(s1 == s2);
+System.out.println(s1 == s3);
+
+Output:
+
+false
+true
+
+Explanation:
+
+String s2 = new String("Apple");
+
+creates object in normal heap.
+
+s2.intern();
+
+returns reference of "Apple" from String Pool.
+
+Memory:
+
+s1 -> String Pool "Apple"
+s2 -> Normal Heap "Apple"
+s3 -> String Pool "Apple"
+
+So:
+
+s1 == s3
+
+is true.
+
+9. Why Strings are Immutable in Java?
+
+Immutable means:
+
+Once created, a String object cannot be changed.
+
+Example:
+
+String s = "Hello";
+s = s + " World";
+
+Many students think "Hello" is changed into "Hello World".
+
+But actually, Java creates a new String object.
+
+Memory:
+
+Before:
+s -> "Hello"
+
+After:
+s -> "Hello World"
+
+Old "Hello" still exists if referenced or waits for garbage collection.
+
+So this:
+
+s = s + " World";
+
+does not modify old "Hello".
+
+It creates a new object "Hello World" and makes s point to it.
+
+10. Why did Java make String immutable?
+
+There are several important reasons.
+
+Reason 1: String Pool safety
+
+String literals are shared.
+
+Example:
+
+String a = "Apple";
+String b = "Apple";
+
+Both point to the same object.
+
+Now imagine if String was mutable:
+
+a.change("Mango");
+
+Then b would also become "Mango" because both point to same object.
+
+That would be dangerous.
+
+a -> "Apple"
+b -> "Apple"
+
+If a changes Apple to Mango:
+
+a -> "Mango"
+b -> "Mango"  ❌ problem
+
+So Java made String immutable.
+
+Reason 2: Security
+
+Strings are used in important places like:
+
+database username
+password
+file path
+network URL
+class loading
+configuration
+
+Example:
+
+String url = "jdbc:mysql://localhost:3306/db";
+
+If strings were mutable, someone could change the URL secretly.
+
+That would be unsafe.
+
+Reason 3: Hashcode caching
+
+Strings are used as keys in HashMap.
+
+Example:
+
+HashMap<String, Integer> map = new HashMap<>();
+
+map.put("Apple", 10);
+
+HashMap uses the string hashcode to decide where to store data.
+
+If String could change after insertion, the hashcode would change and HashMap would break.
+
+Example problem if String was mutable:
+
+put("Apple", 10)
+
+Then Apple changes to Mango
+
+Now HashMap cannot find the old key properly.
+
+Because String is immutable, this problem does not happen.
+
+Reason 4: Thread safety
+
+Immutable objects are naturally thread-safe.
+
+Multiple threads can use the same String without changing it.
+
+Example:
+
+String appName = "ExamPulse";
+
+Many parts of a program can use this same string safely.
+
+No one can modify the original object.
+
+Reason 5: Better performance
+
+Because Strings are immutable, Java can reuse them from String Pool.
+
+This saves memory and improves performance.
+
+11. Full Example: Stack, Heap, Pool
+
+Code:
+
+public class Main {
+    public static void main(String[] args) {
+        String s1 = "Apple";
+        String s2 = "Apple";
+        String s3 = new String("Apple");
+
+        System.out.println(s1 == s2);
+        System.out.println(s1 == s3);
+        System.out.println(s1.equals(s3));
+    }
+}
+
+Output:
+
+true
+false
+true
+
+Memory diagram:
+
+Stack
+--------------------------------
+s1 -> 100
+s2 -> 100
+s3 -> 200
+--------------------------------
+
+
+Heap
+--------------------------------
+String Pool:
+100 -> "Apple"
+
+Normal Heap:
+200 -> "Apple"
+--------------------------------
+
+Explanation:
+
+s1 == s2
+
+true, because both point to String Pool object.
+
+s1 == s3
+
+false, because s3 points to a new object in heap.
+
+s1.equals(s3)
+
+true, because both values are "Apple".
+
+12. String modification example
+
+Code:
+
+public class Main {
+    public static void main(String[] args) {
+        String s = "Hello";
+
+        s.concat(" World");
+
+        System.out.println(s);
+    }
+}
+
+Output:
+
+Hello
+
+Why not Hello World?
+
+Because String is immutable.
+
+This line:
+
+s.concat(" World");
+
+creates a new String, but we did not store it.
+
+Correct code:
+
+public class Main {
+    public static void main(String[] args) {
+        String s = "Hello";
+
+        s = s.concat(" World");
+
+        System.out.println(s);
+    }
+}
+
+Output:
+
+Hello World
+
+Memory:
+
+Before:
+s -> "Hello"
+
+After:
+s -> "Hello World"
+13. String vs StringBuilder vs StringBuffer
+
+Since String is immutable, repeated modification creates many objects.
+
+Bad for many changes:
+
+String s = "";
+
+for (int i = 1; i <= 5; i++) {
+    s = s + i;
+}
+
+System.out.println(s);
+
+This creates many temporary String objects.
+
+Better:
+
+StringBuilder sb = new StringBuilder();
+
+for (int i = 1; i <= 5; i++) {
+    sb.append(i);
+}
+
+System.out.println(sb.toString());
+
+Output:
+
+12345
+Difference table
+Class	Mutable?	Thread-safe?	Speed
+String	No	Yes	Slow for many changes
+StringBuilder	Yes	No	Fast
+StringBuffer	Yes	Yes	Slower than StringBuilder
+
+Use:
+
+String          -> fixed text
+StringBuilder   -> many changes, single-thread
+StringBuffer    -> many changes, multi-thread
+14. Important Interview Points
+String is immutable
+String s = "Hello";
+s = s + " World";
+
+Original "Hello" is not changed. New object is created.
+
+String Pool saves memory
+String a = "Cat";
+String b = "Cat";
+
+Only one "Cat" object in String Pool.
+
+new String() creates new object
+String a = "Cat";
+String b = new String("Cat");
+
+Here a == b is false.
+
+.equals() checks content
+a.equals(b)
+
+This checks actual string value.
+
+intern() returns pooled object
+String c = b.intern();
+
+Now c points to String Pool object.
+
+15. Final complete code for practice
+public class StringMemoryDemo {
+    public static void main(String[] args) {
+
+        String s1 = "Mango";
+        String s2 = "Mango";
+        String s3 = new String("Mango");
+        String s4 = s3.intern();
+
+        System.out.println("s1 = " + s1);
+        System.out.println("s2 = " + s2);
+        System.out.println("s3 = " + s3);
+        System.out.println("s4 = " + s4);
+
+        System.out.println("\nUsing == operator:");
+        System.out.println("s1 == s2 : " + (s1 == s2));
+        System.out.println("s1 == s3 : " + (s1 == s3));
+        System.out.println("s1 == s4 : " + (s1 == s4));
+
+        System.out.println("\nUsing equals() method:");
+        System.out.println("s1.equals(s2) : " + s1.equals(s2));
+        System.out.println("s1.equals(s3) : " + s1.equals(s3));
+        System.out.println("s1.equals(s4) : " + s1.equals(s4));
+
+        System.out.println("\nString immutability:");
+        String fruit = "Apple";
+        fruit.concat(" Juice");
+
+        System.out.println("After concat without storing: " + fruit);
+
+        fruit = fruit.concat(" Juice");
+
+        System.out.println("After concat with storing: " + fruit);
+    }
+}
+
+Output:
+
+s1 = Mango
+s2 = Mango
+s3 = Mango
+s4 = Mango
+
+Using == operator:
+s1 == s2 : true
+s1 == s3 : false
+s1 == s4 : true
+
+Using equals() method:
+s1.equals(s2) : true
+s1.equals(s3) : true
+s1.equals(s4) : true
+
+String immutability:
+After concat without storing: Apple
+After concat with storing: Apple Juice
+Super short revision
+Stack:
+Stores local variables and references.
+
+Heap:
+Stores objects.
+
+String Pool:
+Special area inside heap where string literals are stored.
+
+String Interning:
+Reusing same string literal object from String Pool.
+
+String Immutable:
+String object cannot be changed after creation.
+
+==:
+Checks address/reference.
+
+equals():
+Checks actual content.
+
+new String():
+Creates new object in heap.
+
+intern():
+Returns String Pool reference.
+
+
+
+
+
+
+
+
+
+
+
+Java StringBuilder A to Z Explanation
+
+StringBuilder is used when we need to change / modify strings many times.
+
+Example:
+
+StringBuilder sb = new StringBuilder("Hello");
+sb.append(" World");
+
+System.out.println(sb);
+
+Output:
+
+Hello World
+1. Why do we need StringBuilder?
+
+In Java, String is immutable.
+
+Meaning: once a String object is created, it cannot be changed.
+
+Example:
+
+String s = "Hello";
+s = s + " World";
+
+Here old "Hello" does not change. Java creates a new String object "Hello World".
+
+So if we modify string many times, many objects are created.
+
+Bad example:
+
+String s = "";
+
+for (int i = 1; i <= 5; i++) {
+    s = s + i;
+}
+
+System.out.println(s);
+
+Output:
+
+12345
+
+But internally Java creates many temporary strings:
+
+""
+"1"
+"12"
+"123"
+"1234"
+"12345"
+
+This wastes memory.
+
+So we use StringBuilder.
+
+2. What is StringBuilder?
+
+StringBuilder is a mutable class in Java.
+
+Mutable means:
+
+Object can be changed after creation.
+
+Example:
+
+StringBuilder sb = new StringBuilder("Hello");
+
+sb.append(" World");
+
+System.out.println(sb);
+
+Output:
+
+Hello World
+
+Here same object is modified. New object is not created every time.
+
+3. Import needed?
+
+No special import needed.
+
+StringBuilder belongs to:
+
+java.lang
+
+So it is automatically available.
+
+4. Creating StringBuilder
+Method 1: Empty StringBuilder
+StringBuilder sb = new StringBuilder();
+
+Default capacity is 16.
+
+Method 2: With initial string
+StringBuilder sb = new StringBuilder("Apple");
+Method 3: With capacity
+StringBuilder sb = new StringBuilder(50);
+
+This creates capacity for 50 characters.
+
+5. StringBuilder Memory Concept
+
+Example:
+
+StringBuilder sb = new StringBuilder("Hi");
+sb.append(" Jeet");
+
+Memory idea:
+
+Stack
+---------------------
+sb -> address 500
+---------------------
+
+
+Heap
+---------------------
+500 -> StringBuilder object
+       value = "Hi Jeet"
+---------------------
+
+Same object changes.
+
+But with String:
+
+String s = "Hi";
+s = s + " Jeet";
+
+Memory idea:
+
+Before:
+s -> "Hi"
+
+After:
+s -> "Hi Jeet"
+
+Old "Hi" still exists until garbage collection.
+6. Important Methods of StringBuilder
+6.1 append()
+
+Adds data at the end.
+
+StringBuilder sb = new StringBuilder("Hello");
+
+sb.append(" World");
+
+System.out.println(sb);
+
+Output:
+
+Hello World
+
+You can append different data types:
+
+StringBuilder sb = new StringBuilder();
+
+sb.append("Name: ");
+sb.append("Jeet");
+sb.append(", Age: ");
+sb.append(21);
+sb.append(", Marks: ");
+sb.append(95.5);
+
+System.out.println(sb);
+
+Output:
+
+Name: Jeet, Age: 21, Marks: 95.5
+6.2 insert()
+
+Inserts data at a specific index.
+
+StringBuilder sb = new StringBuilder("Helo");
+
+sb.insert(2, "l");
+
+System.out.println(sb);
+
+Output:
+
+Hello
+
+Index:
+
+H e l o
+0 1 2 3
+
+At index 2, we inserted "l".
+
+Another example:
+
+StringBuilder sb = new StringBuilder("Hello World");
+
+sb.insert(6, "Java ");
+
+System.out.println(sb);
+
+Output:
+
+Hello Java World
+6.3 delete()
+
+Deletes characters from start index to end index minus one.
+
+Formula:
+
+delete(start, end)
+
+start included, end excluded.
+
+Example:
+
+StringBuilder sb = new StringBuilder("Hello Java World");
+
+sb.delete(6, 11);
+
+System.out.println(sb);
+
+Output:
+
+Hello World
+
+Because index 6 to 10 deleted.
+
+6.4 deleteCharAt()
+
+Deletes one character at a specific index.
+
+StringBuilder sb = new StringBuilder("Helloo");
+
+sb.deleteCharAt(5);
+
+System.out.println(sb);
+
+Output:
+
+Hello
+6.5 replace()
+
+Replaces characters from start index to end index minus one.
+
+StringBuilder sb = new StringBuilder("Hello World");
+
+sb.replace(6, 11, "Java");
+
+System.out.println(sb);
+
+Output:
+
+Hello Java
+6.6 reverse()
+
+Reverses the string.
+
+StringBuilder sb = new StringBuilder("Apple");
+
+sb.reverse();
+
+System.out.println(sb);
+
+Output:
+
+elppA
+
+Very useful for palindrome.
+
+6.7 charAt()
+
+Returns character at given index.
+
+StringBuilder sb = new StringBuilder("Mango");
+
+System.out.println(sb.charAt(0));
+System.out.println(sb.charAt(3));
+
+Output:
+
+M
+g
+
+Index:
+
+M a n g o
+0 1 2 3 4
+6.8 setCharAt()
+
+Changes character at given index.
+
+StringBuilder sb = new StringBuilder("Hallo");
+
+sb.setCharAt(1, 'e');
+
+System.out.println(sb);
+
+Output:
+
+Hello
+6.9 length()
+
+Returns current number of characters.
+
+StringBuilder sb = new StringBuilder("Apple");
+
+System.out.println(sb.length());
+
+Output:
+
+5
+6.10 capacity()
+
+Returns current storage capacity.
+
+StringBuilder sb = new StringBuilder();
+
+System.out.println(sb.length());
+System.out.println(sb.capacity());
+
+Output:
+
+0
+16
+
+Default capacity is 16.
+
+Example:
+
+StringBuilder sb = new StringBuilder("Apple");
+
+System.out.println(sb.length());
+System.out.println(sb.capacity());
+
+Output:
+
+5
+21
+
+Why capacity 21?
+
+Formula:
+
+String length + 16
+
+So:
+
+5 + 16 = 21
+7. Capacity growth formula
+
+When capacity is full, Java increases capacity automatically.
+
+Formula:
+
+new capacity = old capacity * 2 + 2
+
+Example:
+
+StringBuilder sb = new StringBuilder();
+
+System.out.println(sb.capacity());
+
+sb.append("abcdefghijklmnop"); // 16 chars
+System.out.println(sb.capacity());
+
+sb.append("q"); // 17th char
+System.out.println(sb.capacity());
+
+Output:
+
+16
+16
+34
+
+Because:
+
+16 * 2 + 2 = 34
+8. ensureCapacity()
+
+It makes sure capacity is at least the given number.
+
+StringBuilder sb = new StringBuilder();
+
+sb.ensureCapacity(50);
+
+System.out.println(sb.capacity());
+
+Output:
+
+50
+
+Use this when you already know large string will be created.
+
+9. toString()
+
+Converts StringBuilder into String.
+
+StringBuilder sb = new StringBuilder("Hello");
+
+String s = sb.toString();
+
+System.out.println(s);
+
+Output:
+
+Hello
+
+Why needed?
+
+Many methods require String, not StringBuilder.
+
+Example:
+
+StringBuilder sb = new StringBuilder("Jeet");
+
+String name = sb.toString();
+10. Full method example
+public class StringBuilderDemo {
+    public static void main(String[] args) {
+
+        StringBuilder sb = new StringBuilder("Hello");
+
+        System.out.println("Original: " + sb);
+
+        sb.append(" World");
+        System.out.println("After append: " + sb);
+
+        sb.insert(6, "Java ");
+        System.out.println("After insert: " + sb);
+
+        sb.replace(6, 10, "Python");
+        System.out.println("After replace: " + sb);
+
+        sb.delete(6, 13);
+        System.out.println("After delete: " + sb);
+
+        sb.setCharAt(0, 'h');
+        System.out.println("After setCharAt: " + sb);
+
+        sb.reverse();
+        System.out.println("After reverse: " + sb);
+
+        System.out.println("Length: " + sb.length());
+        System.out.println("Capacity: " + sb.capacity());
+    }
+}
+
+Output:
+
+Original: Hello
+After append: Hello World
+After insert: Hello Java World
+After replace: Hello Python World
+After delete: Hello World
+After setCharAt: hello World
+After reverse: dlroW olleh
+Length: 11
+Capacity: 21
+11. User input with StringBuilder
+import java.util.Scanner;
+
+public class UserInputStringBuilder {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        StringBuilder sb = new StringBuilder();
+
+        System.out.print("Enter your first name: ");
+        String firstName = sc.nextLine();
+
+        System.out.print("Enter your last name: ");
+        String lastName = sc.nextLine();
+
+        sb.append(firstName);
+        sb.append(" ");
+        sb.append(lastName);
+
+        System.out.println("Full Name: " + sb);
+
+        sc.close();
+    }
+}
+
+Output:
+
+Enter your first name: Jeet
+Enter your last name: Mondal
+Full Name: Jeet Mondal
+12. Reverse string using StringBuilder
+import java.util.Scanner;
+
+public class ReverseString {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter a string: ");
+        String input = sc.nextLine();
+
+        StringBuilder sb = new StringBuilder(input);
+
+        sb.reverse();
+
+        System.out.println("Reversed string: " + sb);
+
+        sc.close();
+    }
+}
+
+Output:
+
+Enter a string: mango
+Reversed string: ognam
+13. Palindrome using StringBuilder
+
+Palindrome means same from front and back.
+
+Example:
+
+madam
+level
+nitin
+
+Code:
+
+import java.util.Scanner;
+
+public class PalindromeStringBuilder {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter a string: ");
+        String input = sc.nextLine();
+
+        StringBuilder sb = new StringBuilder(input);
+        String reversed = sb.reverse().toString();
+
+        if (input.equals(reversed)) {
+            System.out.println("Palindrome");
+        } else {
+            System.out.println("Not Palindrome");
+        }
+
+        sc.close();
+    }
+}
+
+Output:
+
+Enter a string: madam
+Palindrome
+14. Case-insensitive palindrome
+import java.util.Scanner;
+
+public class PalindromeIgnoreCase {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter a string: ");
+        String input = sc.nextLine();
+
+        String lowerInput = input.toLowerCase();
+
+        String reversed = new StringBuilder(lowerInput).reverse().toString();
+
+        if (lowerInput.equals(reversed)) {
+            System.out.println("Palindrome");
+        } else {
+            System.out.println("Not Palindrome");
+        }
+
+        sc.close();
+    }
+}
+
+Example:
+
+Madam
+Palindrome
+15. Remove spaces and check palindrome
+
+Example:
+
+nurses run
+
+After removing spaces:
+
+nursesrun
+
+Reverse:
+
+nursesrun
+
+Code:
+
+import java.util.Scanner;
+
+public class PalindromeIgnoreSpaces {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter sentence: ");
+        String input = sc.nextLine();
+
+        String cleaned = input.replace(" ", "").toLowerCase();
+
+        String reversed = new StringBuilder(cleaned).reverse().toString();
+
+        if (cleaned.equals(reversed)) {
+            System.out.println("Palindrome");
+        } else {
+            System.out.println("Not Palindrome");
+        }
+
+        sc.close();
+    }
+}
+16. StringBuilder vs String
+Topic	String	StringBuilder
+Mutable?	No	Yes
+Object changes?	No, new object created	Same object changes
+Performance	Slow for many changes	Fast
+Thread safe?	Yes, because immutable	No
+Best use	Fixed text	Text changes many times
+
+Example:
+
+String s = "Hello";
+s = s + " World";
+
+Creates new object.
+
+StringBuilder sb = new StringBuilder("Hello");
+sb.append(" World");
+
+Modifies same object.
+
+17. StringBuilder vs StringBuffer
+Topic	StringBuilder	StringBuffer
+Mutable?	Yes	Yes
+Thread safe?	No	Yes
+Speed	Faster	Slower
+Introduced	Java 5	Java 1.0
+Best use	Single-thread	Multi-thread
+
+Usually use:
+
+StringBuilder
+
+Because it is faster.
+
+Use StringBuffer only when multiple threads are changing same object.
+
+18. Important point: StringBuilder does not override equals()
+
+This is very important.
+
+Example:
+
+StringBuilder sb1 = new StringBuilder("Apple");
+StringBuilder sb2 = new StringBuilder("Apple");
+
+System.out.println(sb1.equals(sb2));
+
+Output:
+
+false
+
+Why?
+
+Because StringBuilder does not compare content using .equals().
+
+It compares reference/address like ==.
+
+Correct way:
+
+System.out.println(sb1.toString().equals(sb2.toString()));
+
+Output:
+
+true
+
+Full example:
+
+public class CompareStringBuilder {
+    public static void main(String[] args) {
+        StringBuilder sb1 = new StringBuilder("Apple");
+        StringBuilder sb2 = new StringBuilder("Apple");
+
+        System.out.println(sb1 == sb2);
+        System.out.println(sb1.equals(sb2));
+        System.out.println(sb1.toString().equals(sb2.toString()));
+    }
+}
+
+Output:
+
+false
+false
+true
+19. Important point: reverse changes original object
+
+Example:
+
+StringBuilder sb = new StringBuilder("Apple");
+
+sb.reverse();
+
+System.out.println(sb);
+
+Output:
+
+elppA
+
+Original object changed.
+
+If you do not want to change original:
+
+StringBuilder sb = new StringBuilder("Apple");
+
+String reversed = new StringBuilder(sb).reverse().toString();
+
+System.out.println("Original: " + sb);
+System.out.println("Reversed: " + reversed);
+
+Output:
+
+Original: Apple
+Reversed: elppA
+20. Taking multiple words and joining them
+import java.util.Scanner;
+
+public class JoinWords {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        StringBuilder result = new StringBuilder();
+
+        System.out.print("Enter number of words: ");
+        int n = sc.nextInt();
+        sc.nextLine();
+
+        for (int i = 1; i <= n; i++) {
+            System.out.print("Enter word " + i + ": ");
+            String word = sc.nextLine();
+
+            result.append(word);
+
+            if (i != n) {
+                result.append(" ");
+            }
+        }
+
+        System.out.println("Final sentence: " + result);
+
+        sc.close();
+    }
+}
+
+Output:
+
+Enter number of words: 3
+Enter word 1: I
+Enter word 2: love
+Enter word 3: Java
+Final sentence: I love Java
+21. Count vowels using StringBuilder
+import java.util.Scanner;
+
+public class CountVowels {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter string: ");
+        StringBuilder sb = new StringBuilder(sc.nextLine().toLowerCase());
+
+        int count = 0;
+
+        for (int i = 0; i < sb.length(); i++) {
+            char ch = sb.charAt(i);
+
+            if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
+                count++;
+            }
+        }
+
+        System.out.println("Total vowels: " + count);
+
+        sc.close();
+    }
+}
+22. Remove all vowels using StringBuilder
+import java.util.Scanner;
+
+public class RemoveVowels {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter string: ");
+        StringBuilder sb = new StringBuilder(sc.nextLine());
+
+        for (int i = 0; i < sb.length(); i++) {
+            char ch = Character.toLowerCase(sb.charAt(i));
+
+            if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
+                sb.deleteCharAt(i);
+                i--;
+            }
+        }
+
+        System.out.println("After removing vowels: " + sb);
+
+        sc.close();
+    }
+}
+
+Important:
+
+i--;
+
+Why?
+
+Because after deleting one character, next character shifts left.
+
+Example:
+
+beautiful
+
+If we delete one char, indexes change.
+
+So we use i--.
+
+23. Capitalize first letter of each word
+import java.util.Scanner;
+
+public class CapitalizeWords {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter sentence: ");
+        StringBuilder sb = new StringBuilder(sc.nextLine().toLowerCase());
+
+        boolean makeCapital = true;
+
+        for (int i = 0; i < sb.length(); i++) {
+            char ch = sb.charAt(i);
+
+            if (ch == ' ') {
+                makeCapital = true;
+            } else if (makeCapital) {
+                sb.setCharAt(i, Character.toUpperCase(ch));
+                makeCapital = false;
+            }
+        }
+
+        System.out.println("Capitalized sentence: " + sb);
+
+        sc.close();
+    }
+}
+
+Input:
+
+hello jeet mondal
+
+Output:
+
+Hello Jeet Mondal
+24. Why StringBuilder is faster?
+
+Because StringBuilder modifies the same internal character array.
+
+Conceptually:
+
+StringBuilder object
+--------------------------------
+internal array: ['H', 'e', 'l', 'l', 'o', ...]
+--------------------------------
+
+When append happens:
+
+sb.append(" World");
+
+It adds characters into same internal storage.
+
+But String creates new objects again and again.
+
+25. Common mistakes
+Mistake 1: Comparing StringBuilder using .equals()
+
+Wrong:
+
+StringBuilder a = new StringBuilder("Hi");
+StringBuilder b = new StringBuilder("Hi");
+
+System.out.println(a.equals(b));
+
+Output:
+
+false
+
+Correct:
+
+System.out.println(a.toString().equals(b.toString()));
+Mistake 2: Index error
+StringBuilder sb = new StringBuilder("Hello");
+
+System.out.println(sb.charAt(5));
+
+Wrong, because last index is 4.
+
+H e l l o
+0 1 2 3 4
+
+Correct:
+
+System.out.println(sb.charAt(4));
+Mistake 3: Forgetting reverse changes original
+StringBuilder sb = new StringBuilder("Java");
+String rev = sb.reverse().toString();
+
+System.out.println(sb);
+
+Output:
+
+avaJ
+
+Original also reversed.
+
+26. Best practice
+
+Use StringBuilder when:
+
+You are modifying string many times.
+You are using loops with string concatenation.
+You are creating large dynamic text.
+You need reverse, insert, delete, replace operations.
+
+Do not use it unnecessarily for simple fixed strings.
+
+Example:
+
+String name = "Jeet";
+
+This is fine.
+
+But for loop:
+
+StringBuilder sb = new StringBuilder();
+
+for (int i = 1; i <= 1000; i++) {
+    sb.append(i);
+}
+
+This is better.
+
+27. Interview short answer
+
+StringBuilder is a mutable class in Java used to create and modify strings efficiently. Unlike String, it does not create a new object every time we change the text. It is faster than String for repeated modifications, but it is not thread-safe. Important methods are append(), insert(), delete(), replace(), reverse(), charAt(), setCharAt(), length(), capacity(), and toString().
+
+28. Final revision
+StringBuilder:
+Mutable string class.
+
+Package:
+java.lang
+
+Main use:
+Fast string modification.
+
+Default capacity:
+16
+
+Capacity growth:
+old capacity * 2 + 2
+
+Thread safe:
+No
+
+Faster than:
+StringBuffer
+
+Useful methods:
+append()
+insert()
+delete()
+deleteCharAt()
+replace()
+reverse()
+charAt()
+setCharAt()
+length()
+capacity()
+ensureCapacity()
+toString()
+
+Compare content:
+sb1.toString().equals(sb2.toString())
