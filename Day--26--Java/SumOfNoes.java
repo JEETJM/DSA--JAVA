@@ -24,7 +24,7 @@ public class SumOfNoes {
         if (data == -1) {
             return null;
         }
-
+        //Pre Order Tree .
         Node root = new Node(data);
 
         root.left = buildTree();
